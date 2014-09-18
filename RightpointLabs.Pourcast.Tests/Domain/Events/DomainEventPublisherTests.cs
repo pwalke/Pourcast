@@ -25,6 +25,18 @@
         }
 
         [TestMethod]
+        public void  SendTextMessage()
+        {
+            string kegIdResult = "";
+            string tapIdResult = "";
+
+            DomainEvents.Register<PourStarted>(x => kegIdResult = x.KegId);
+            DomainEvents.Register<PourStarted>(x => tapIdResult = x.TapId);
+            DomainEvents.Raise(new PourStarted("test tapid", "test kegid"));
+
+        }
+
+        [TestMethod]
         public void FiresOffMultipleHandler()
         {
             double volume = 1;
