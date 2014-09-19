@@ -1,8 +1,12 @@
 ﻿namespace RightpointLabs.Pourcast.Tests.Domain.Events
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+    using Moq;
+    using RightpointLabs.Pourcast.Application.EventHandlers;
     using RightpointLabs.Pourcast.Domain.Events;
+    using RightpointLabs.Pourcast.Domain.Repositories;
+    using RightpointLabs.Pourcast.Domain.Services;
+    using RightpointLabs.Pourcast.Infrastructure.Services;
 
     [TestClass]
     public class DomainEventPublisherTests
@@ -25,14 +29,17 @@
         }
 
         [TestMethod]
-        public void  SendTextMessage()
+        public void SendTextMessage()
         {
             string kegIdResult = "";
             string tapIdResult = "";
-
-            DomainEvents.Register<PourStarted>(x => kegIdResult = x.KegId);
-            DomainEvents.Register<PourStarted>(x => tapIdResult = x.TapId);
-            DomainEvents.Raise(new PourStarted("test tapid", "test kegid"));
+            TextFirstPourNotificationHandler handler = new TextFirstPourNotificationHandler(
+                Mock.Of<ITapRepository>(),
+                Mock.Of<IKegRepository>(),
+                new TextMessageService(),
+                Mock.Of<IEmailService>(),
+                Mock.Of<IBeerRepository>());
+            handler.Handle(null);
 
         }
 
